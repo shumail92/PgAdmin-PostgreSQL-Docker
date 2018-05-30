@@ -1,0 +1,45 @@
+# PostgreSQL_PgAdmin_Dockerized
+# @author: Shumail Mohyuddin
+# 
+# This docker-compose file will initiate 2 docker containers. One with PostgreSQL & other with PgAdmin.
+# Before running it, change volumes according to your filesystem respectively
+# The default username & password of PgAdmin is 
+#   email: pgadmin4@pgadmin.org
+#   password: admin
+#
+# Note: When you add new server in PgAdmin, make sure you enter 'postgres' in hostname. Because of docker network, it will itself connect to the postgres instance running in its separate container.
+# Enjoy! 
+
+version: '2'
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+      PGDATA: /data/postgres
+    volumes:
+       - /xxxx/db/data/postgres:/data/postgres
+    ports:
+      - "5432:5432"
+    networks:
+      - postgres
+    restart: unless-stopped
+  
+  pgadmin:
+    links:
+      - postgres:postgres
+    image: fenglc/pgadmin4
+    volumes:
+       - /xxxx/db/data/pgadmin:/root/.pgadmin
+    ports:
+      - "5050:5050"
+    networks:
+      - postgres
+    restart: unless-stopped
+
+networks:
+  postgres:
+    driver: bridge
+	
